@@ -6,10 +6,13 @@
 var paypal = require('paypal-rest-sdk');
 var Q = require('q');
 
-function PayPal(options) {
-    paypal.configure(options);
+function PayPal(clientId, clientSecret, mode) {
+    paypal.configure({
+        client_id: clientId,
+        client_secret: clientSecret,
+        mode: mode
+    });
 }
-
 
 /**
  *
@@ -37,7 +40,8 @@ PayPal.prototype.createCard = function (firstName, lastName, cardType, cardNumbe
         if (err) {
             return deferred.reject(err);
         }
-        return deferred.resolve(response);
+
+        deferred.resolve(response);
     });
     return deferred.promise;
 };
@@ -50,16 +54,13 @@ PayPal.prototype.createCard = function (firstName, lastName, cardType, cardNumbe
  */
 PayPal.prototype.deleteCard = function (cardId) {
     var deferred = Q.defer();
-    try {
-        paypal.creditCard.del(cardId, function (err) {
-            if (err) {
-                return Q.reject(err);
-            }
-            return Q.resolve();
-        });
-    } catch (e) {
-        return Q.reject(e);
-    }
+    paypal.creditCard.del(cardId, function (err, response) {
+        if (err) {
+            return deferred.reject(err);
+        }
+
+        deferred.resolve(response);
+    });
     return deferred.promise;
 };
 
@@ -85,7 +86,7 @@ PayPal.prototype.collectPayment = function (cardId, amount, currency, descriptio
         },
         'transactions': [{
             'amount': {
-                'currency': !currency ? 'USD' : currency,
+                'currency': currency ? currency : 'USD',
                 'total': amount
             },
             'description': description
@@ -93,9 +94,38 @@ PayPal.prototype.collectPayment = function (cardId, amount, currency, descriptio
     };
     paypal.payment.create(cardInfo, function (err, payment) {
         if (err) {
-            return Q.reject(err);
+            return deferred.reject(err);
         }
-        return Q.resolve(payment);
+
+        deferred.resolve(payment);
+    });
+    return deferred.promise;
+};
+
+PayPal.prototype.makeDeposit = function (subject, email, currency, amount) {
+    var deferred = Q.defer();
+    var senderBatchId = Math.random().toString(36).substring(9);
+    var create_payout_json = {
+        'sender_batch_header': {
+            'sender_batch_id': senderBatchId,
+            'email_subject': subject
+        },
+        'items': [
+            {
+                'recipient_type': 'EMAIL',
+                'amount': {
+                    'value': amount,
+                    'currency': currency ? currency : 'USD'
+                },
+                'receiver': email
+            }
+        ]
+    };
+    paypal.payout.create(create_payout_json, true, function (err, payout) {
+        if (err) {
+            return deferred.reject(err);
+        }
+        deferred.resolve(payout);
     });
     return deferred.promise;
 };

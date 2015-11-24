@@ -16,24 +16,32 @@ function Geocoder(apiKey) {
 }
 
 Geocoder.prototype.reverseGeocode = function (latitude, longitude) {
+    if (latitude === undefined || longitude === undefined) {
+        return Q.reject(new Error('Wrong incoming parameters'));
+    }
+
     var deferred = Q.defer();
-    this.service.reverse({lat:latitude, lon:longitude})
-        .then(function(result) {
+    this.service.reverse({lat: latitude, lon: longitude})
+        .then(function (result) {
             return deferred.resolve(result);
         })
-        .catch(function(err) {
+        .catch(function (err) {
             return deferred.reject(err);
         });
     return deferred.promise;
 };
 
 Geocoder.prototype.geocode = function (address) {
+    if (address === undefined) {
+        return Q.reject(new Error('Wrong incoming parameters'));
+    }
+
     var deferred = Q.defer();
     this.service.geocode(address)
-        .then(function(result) {
+        .then(function (result) {
             return deferred.resolve(result);
         })
-        .catch(function(err) {
+        .catch(function (err) {
             return deferred.reject(err);
         });
     return deferred.promise;

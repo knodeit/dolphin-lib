@@ -12,3 +12,13 @@ exports.KNExift = require('./exift');
 exports.KNRegexp = require('./regexp');
 
 exports.KNExceptions = require('./exceptions');
+
+exports.KNGoogle = require('./google');
+
+exports.KNPaypal = require('./paypal');
+
+exports.KNTwilio = require('./twilio');
+
+exports.KNMongooseFixtures = require('./mongoose-fixtures');
+
+exports.KNPassportLocalapi = require('./passport-localapi');

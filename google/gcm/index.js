@@ -8,25 +8,24 @@ var Q = require('q');
 
 function Gcm(apiKey) {
     this.service = new gcm.AndroidGcm(apiKey);
-
-
 }
 
-
 Gcm.prototype.sendMessage = function (registrationId, content) {
+    var deferred = Q.defer();
     try {
         var messageToSend = new gcm.Message( );
         messageToSend.addNew_DataObject(content);
         messageToSend.addNew_RegistrationId(registrationId);
         this.service.send(messageToSend, function(err, response) {
             if (err){
-                return Q.reject(err);
+                return deferred.reject(err);
             }
-            return Q.resolve(response);
+            return deferred.resolve(response);
         });
     } catch (e) {
         return Q.reject(e);
     }
+    return deferred.promise;
 };
 
 // export the class
