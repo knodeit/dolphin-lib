@@ -5,6 +5,7 @@
 var Q = require('q');
 var fs = require('fs');
 var KNUtils = require('./KNUtils');
+var KNValidationException = require('../../exceptions/exceptions/KNValidationException');
 
 /**
  *
@@ -114,7 +115,7 @@ KNBaseForm.prototype.validate = function () {
             errors.push(obj[k]);
         }
         if (errors.length > 0) {
-            return deferred.reject(errors);
+            return deferred.reject(new KNValidationException(errors));
         }
         deferred.resolve();
     });

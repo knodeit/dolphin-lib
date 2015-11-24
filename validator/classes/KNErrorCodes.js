@@ -11,5 +11,6 @@ module.exports = {
     range: 105,
     email: 106,
     boolean: 107,
+    rowExists: 108,
     rowNotFound: 404
 };

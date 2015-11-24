@@ -1,5 +1,7 @@
 'use strict';
 
+var Q = require('q');
+
 //
 // ## Constructor
 //
@@ -44,42 +46,44 @@ require('util').inherits(Exift, require('events').EventEmitter);
 //   A function that will be called when data is read. Follows the Node.js
 //   standard with an error argument first and result second.
 //
-Exift.prototype.readData = function (path, fn) {
+Exift.prototype.readData = function (path) {
+    var deferred = Q.defer();
     var self = this;
     self.lib.stat(path, function (err, stat) {
         if (err) {
-            fn(err);
+            return deferred.reject(err);
         }
-        else {
-            var et = self.lib.spawn(self.exiftool, ['-j', path]);
-            var exif = '';
-            err = '';
-            var hasErr = false;
 
-            et.stdout.on('data', function (data) {
-                exif += data;
-            });
+        var et = self.lib.spawn(self.exiftool, ['-j', path]);
+        var exif = '';
+        err = '';
+        var hasErr = false;
 
-            et.stderr.on('data', function (data) {
-                err += data;
-                hasErr = true;
-            });
+        et.stdout.on('data', function (data) {
+            exif += data;
+        });
 
-            et.on('exit', function (code) {
-                if (hasErr && code !== 0) {
-                    if (err.length === 0) {
-                        err = 'Exiftool exited with code: ' + code;
-                    }
-                    fn(new Error(err));
+        et.stderr.on('data', function (data) {
+            err += data;
+            hasErr = true;
+        });
+
+        et.on('exit', function (code) {
+            if (hasErr && code !== 0) {
+                if (err.length === 0) {
+                    err = 'Exiftool exited with code: ' + code;
                 }
-                else {
-                    var json = exif.toString();
-                    var res = JSON.parse(json);
-                    fn(null, res[0] ? res[0] : res);
-                }
-            });
-        }
+
+                return deferred.reject(new Error(err));
+            }
+
+            var json = exif.toString();
+            var res = JSON.parse(json);
+            
+            deferred.resolve(res[0] ? res[0] : res);
+        });
     });
+    return deferred.promise;
 };
 
 //
