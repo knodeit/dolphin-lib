@@ -41,6 +41,7 @@ function _resolveRuleMethod($this, name) {
 
 function _execScenerio($this, scenario, params) {
     var deferred = Q.defer();
+
     if (!scenario.rule) {
         return Q.resolve(null);
     }
