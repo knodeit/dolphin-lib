@@ -10,7 +10,7 @@ var KNErrorCodes = require('../KNErrorCodes');
 exports.validate = function (field, fieldParams, params, value) {
     var message = 'The field "{field}" must be a number'.replace('{field}', field);
     if (isNaN(value) === true) {
-        return Q.resolve(new KNRuleException(field, KNErrorCodes.notNAN, fieldParams && fieldParams.message ? fieldParams.message : message));
+        return Q.reject(new KNRuleException(field, KNErrorCodes.notNAN, fieldParams && fieldParams.message ? fieldParams.message : message));
     }
     return Q.resolve();
 };

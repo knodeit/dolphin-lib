@@ -6,6 +6,7 @@ var Q = require('q');
 var fs = require('fs');
 var KNUtils = require('./KNUtils');
 var KNValidationException = require('../../exceptions/exceptions/KNValidationException');
+var KNRuleException = require('../exceptions/KNRuleException');
 
 /**
  *
@@ -62,10 +63,19 @@ function _execScenerio($this, scenario, params) {
             funcs.push(method(field, scenario.params, params, value));
         });
 
-        Q.all(funcs).then(function (errors) {
-            errors = errors.filter(function (obj) {
-                return obj !== undefined;
-            });
+        Q.allSettled(funcs).then(function (result) {
+            var errors = [];
+            for (var i in result) {
+                var res = result[i];
+                if (res.state == 'rejected') {
+                    errors.push(res.reason);
+                    continue;
+                }
+                if (res.state == 'fulfilled' && res.value instanceof KNRuleException) {
+                    errors.push(res.value);
+                    continue;
+                }
+            }
             deferred.resolve(errors);
         });
     });
