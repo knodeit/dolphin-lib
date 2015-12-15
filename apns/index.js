@@ -47,6 +47,13 @@ function Apns(mode, key, cert) {
         if (errCode == 8) {
             console.log('APNS SERVER  A error code of 8 indicates that the device token is invalid. This could be for a number of reasons - are you using the correct environment? i.e. Production vs. Sandbox');
         }
+        if (errCode == 513) {
+            console.log('Certificate has expired');
+        }
+    });
+
+    this.service.on('error', function (err) {
+        console.log('APNS SERVER - ' + err);
     });
 
     this.service.on('timeout', function () {
