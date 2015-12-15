@@ -55,6 +55,10 @@ function Apns(mode, key, cert) {
     this.service.on('error', function (err) {
         console.log('APNS SERVER - ' + err);
     });
+    
+    this.service.on('error', function (err) {
+        console.log('APNS SERVER - ' + err);
+    });
 
     this.service.on('timeout', function () {
         console.log('APNS SERVER  Connection Timeout');
