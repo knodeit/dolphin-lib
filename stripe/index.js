@@ -25,7 +25,7 @@ Stripe.prototype.createTransaction = function(amount, currency, stripeToken, des
     var deferred = Q.defer();
 
     if (!amount || !currency || !stripeToken) {
-        deferred.reject('missing parameter');
+        return Q.reject('missing parameter');
     }
     var charge = {
         amount: amount,
@@ -54,7 +54,7 @@ Stripe.prototype.getTransaction = function(chargeId) {
     var deferred = Q.defer();
 
     if (!chargeId) {
-        return deferred.reject('chargeId required');
+        return Q.reject('chargeId required');
     }
 
     stripe.charges.retrieve(chargeId, function(err, charge) {
@@ -105,10 +105,10 @@ Stripe.prototype.listTransactions = function(limit) {
 Stripe.prototype.createUser = function(email, metadata, description) {
     var deferred = Q.defer();
     if (!email) {
-        return deferred.reject('email required');
+        return Q.reject('email required');
     }
     if (!metadata) {
-        return deferred.reject('metadata required');
+        return Q.reject('metadata required');
     }
 
     var customer = {
@@ -138,7 +138,7 @@ Stripe.prototype.getUser = function(customerId) {
     var deferred = Q.defer();
 
     if (!customerId) {
-        return deferred.reject('customerId required');
+        return Q.reject('customerId required');
     }
 
     stripe.customers.retrieve(customerId, function(err, customer) {
@@ -161,10 +161,10 @@ Stripe.prototype.getUser = function(customerId) {
 Stripe.prototype.updateUser = function(customerId, userObject) {
     var deferred = Q.defer();
     if (!customerId) {
-        return deferred.reject('customerId required');
+        return Q.reject('customerId required');
     }
     if (!userObject) {
-        return deferred.reject('userObject required');
+        return Q.reject('userObject required');
     }
 
 
@@ -188,7 +188,7 @@ Stripe.prototype.deleteUser = function(customerId) {
     var deferred = Q.defer();
 
     if (!customerId) {
-        return deferred.reject('customerId required');
+        return Q.reject('customerId required');
     }
 
     stripe.customers.del(customerId, function(err, confirmation) {
@@ -241,7 +241,7 @@ Stripe.prototype.createToken = function(cardNumber, cvv, expirationMonth, expira
     var deferred = Q.defer();
 
     if (!cardNumber || !cvv || !expirationMonth || !expirationYear) {
-        return deferred.reject('missing parameter');
+        return Q.reject('missing parameter');
     }
 
     var cardObj = {
@@ -273,7 +273,7 @@ Stripe.prototype.getToken = function(tokenId) {
     var deferred = Q.defer();
 
     if (!tokenId) {
-        return deferred.reject('tokenId required');
+        return Q.reject('tokenId required');
     }
 
     stripe.tokens.retrieve(tokenId, function(err, token) {
@@ -331,7 +331,7 @@ Stripe.prototype.createCard = function(customerId, cardNumber, expirationMonth, 
     var deferred = Q.defer();
 
     if (!customerId || !cardNumber || !expirationMonth || !expirationYear || !cvv) {
-        return deferred.reject('missing params');
+        return Q.reject('missing params');
     }
 
     var cardDetails = {
@@ -365,7 +365,7 @@ Stripe.prototype.getCard = function(customerId, cardId) {
     var deferred = Q.defer();
 
     if (!cardId || !customerId) {
-        return deferred.reject('cardId & customerId required');
+        return Q.reject('cardId & customerId required');
     }
 
     stripe.customers.retrieveCard(customerId, cardId, function(err, card) {
@@ -389,7 +389,7 @@ Stripe.prototype.deleteCard = function(customerId, cardId) {
     var deferred = Q.defer();
 
     if (!cardId || !customerId) {
-        return deferred.reject('cardId & customerId required');
+        return Q.reject('cardId & customerId required');
     }
 
     stripe.customers.deleteCard(customerId, cardId, function(err, card) {
@@ -412,7 +412,7 @@ Stripe.prototype.listCards = function(customerId) {
     var deferred = Q.defer();
 
     if (!customerId) {
-        return deferred.reject('customerId required');
+        return Q.reject('customerId required');
     }
 
     stripe.customers.listCards(customerId, function(err, cards) {
