@@ -113,11 +113,19 @@ KNBaseForm.prototype.validate = function () {
                 if (obj[error.field]) {
                     continue;
                 }
-                obj[error.field] = {
-                    field: error.field,
-                    code: error.code,
-                    message: error.message
-                };
+
+                if (error instanceof KNValidationException) {
+                    obj[error.field] = {
+                        field: error.field,
+                        errors: error.getErrors()
+                    };
+                } else {
+                    obj[error.field] = {
+                        field: error.field,
+                        code: error.code,
+                        message: error.message
+                    };
+                }
             }
         }
 
