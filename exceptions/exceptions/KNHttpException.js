@@ -3,7 +3,7 @@
  */
 'use strict';
 
-function KNHttpError(status, err) {
+function KNHttpException(status, err) {
     Error.captureStackTrace(this, this.constructor);
     this.name = this.constructor.name;
     this.status = status;
@@ -18,5 +18,5 @@ function KNHttpError(status, err) {
     };
 }
 
-module.exports = KNHttpError;
+module.exports = KNHttpException;
 require('util').inherits(module.exports, Error);

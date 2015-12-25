@@ -3,7 +3,7 @@
  */
 'use strict';
 
-function KNMongoValidationError(err) {
+function KNMongoException(err) {
     Error.captureStackTrace(this, this.constructor);
     this.name = this.constructor.name;
     this.err = err;
@@ -28,5 +28,5 @@ function KNMongoValidationError(err) {
     };
 }
 
-module.exports = KNMongoValidationError;
+module.exports = KNMongoException;
 require('util').inherits(module.exports, Error);
