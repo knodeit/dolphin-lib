@@ -19,6 +19,8 @@ exports.KNPaypal = require('./paypal');
 
 exports.KNTwilio = require('./twilio');
 
+exports.KNStripe = require('./stripe');
+
 exports.KNMongooseFixtures = require('./mongoose-fixtures');
 
 exports.KNPassportLocalapi = require('./passport-localapi');
