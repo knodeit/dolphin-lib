@@ -131,17 +131,17 @@ Stripe.prototype.createUser = function(email, metadata, description) {
 /**
 * @method getUser
 * retrieves a single stripe customer
-* @param {string} customerId - the identifier of the customer to be retrieved (i.e. the customer stripe token).
+* @param {string} userId - the identifier of the customer to be retrieved (i.e. the customer stripe token).
 * @return promise
 */
-Stripe.prototype.getUser = function(customerId) {
+Stripe.prototype.getUser = function(userId) {
     var deferred = Q.defer();
 
-    if (!customerId) {
-        return Q.reject('customerId required');
+    if (!userId) {
+        return Q.reject('userId required');
     }
 
-    stripe.customers.retrieve(customerId, function(err, customer) {
+    stripe.customers.retrieve(userId, function(err, customer) {
         if (err) {
             return deferred.reject(err);
         }
@@ -154,21 +154,21 @@ Stripe.prototype.getUser = function(customerId) {
 /**
 * @method updateUser
 * updates a stripe customer
-* @param {string} customerId - the identifier of the customer to be retrieved (i.e. the customer stripe token).
+* @param {string} userId - the identifier of the customer to be retrieved (i.e. the customer stripe token).
 * @param {object} userObject - an object containing the same fields used to create the user. (e.g. {email: string, metadata: userObject, description: whatever})
 * @return promise
 */
-Stripe.prototype.updateUser = function(customerId, userObject) {
+Stripe.prototype.updateUser = function(userId, userObject) {
     var deferred = Q.defer();
-    if (!customerId) {
-        return Q.reject('customerId required');
+    if (!userId) {
+        return Q.reject('userId required');
     }
     if (!userObject) {
         return Q.reject('userObject required');
     }
 
 
-    stripe.customers.retrieve(customerId, userObject, function(err, customer) {
+    stripe.customers.retrieve(userId, userObject, function(err, customer) {
         if (err) {
             return deferred.reject(err);
         }
@@ -181,17 +181,17 @@ Stripe.prototype.updateUser = function(customerId, userObject) {
 /**
 * @method deleteUser
 * sets delete to true for a stripe customer
-* @param {string} customerId - the identifier of the customer to be deleted (i.e. the customer stripe token).
+* @param {string} userId - the identifier of the customer to be deleted (i.e. the customer stripe token).
 * @return promise
 */
-Stripe.prototype.deleteUser = function(customerId) {
+Stripe.prototype.deleteUser = function(userId) {
     var deferred = Q.defer();
 
-    if (!customerId) {
-        return Q.reject('customerId required');
+    if (!userId) {
+        return Q.reject('userId required');
     }
 
-    stripe.customers.del(customerId, function(err, confirmation) {
+    stripe.customers.del(userId, function(err, confirmation) {
         if (err) {
             return deferred.reject(err);
         }
@@ -320,17 +320,17 @@ Stripe.prototype.createAccount = function(isManaged, email) {
 /**
 * @method createCard
 * create a card associated with a customer
-* @param {string} customerId - required. the identifier of the customer the card will be associated with (i.e. the customer stripe token).
+* @param {string} userId - required. the identifier of the customer the card will be associated with (i.e. the customer stripe token).
 * @param {string} cardNumber - required. the card number, as a string without any separators.
 * @param {number} expirationMonth - required. Two digit number representing the card's expiration month.
 * @param {number} expirationYear - required. Two or four digit number representing the card's expiration year.
 * @param {string} cvv - required. the card security code, as a string without any separators.
 * @return promise
 */
-Stripe.prototype.createCard = function(customerId, cardNumber, expirationMonth, expirationYear, cvv) {
+Stripe.prototype.createCard = function(userId, cardNumber, expirationMonth, expirationYear, cvv) {
     var deferred = Q.defer();
 
-    if (!customerId || !cardNumber || !expirationMonth || !expirationYear || !cvv) {
+    if (!userId || !cardNumber || !expirationMonth || !expirationYear || !cvv) {
         return Q.reject('missing params');
     }
 
@@ -344,7 +344,7 @@ Stripe.prototype.createCard = function(customerId, cardNumber, expirationMonth, 
         }
     };
 
-    stripe.customers.createSource(customerId, cardDetails, function(err, card) {
+    stripe.customers.createSource(userId, cardDetails, function(err, card) {
         if (err) {
             return deferred.reject(err);
         }
@@ -357,18 +357,18 @@ Stripe.prototype.createCard = function(customerId, cardNumber, expirationMonth, 
 /**
 * @method getCard
 * retrieve a single customer's stripe card
-* @param {string} customerId - required. the identifier of the customer (i.e. the customer stripe token).
+* @param {string} userId - required. the identifier of the customer (i.e. the customer stripe token).
 * @param {string} cardId - required. the ID of the card to be retrieved (i.e. the card stripe token).
 * @return promise
 */
-Stripe.prototype.getCard = function(customerId, cardId) {
+Stripe.prototype.getCard = function(userId, cardId) {
     var deferred = Q.defer();
 
-    if (!cardId || !customerId) {
-        return Q.reject('cardId & customerId required');
+    if (!cardId || !userId) {
+        return Q.reject('cardId & userId required');
     }
 
-    stripe.customers.retrieveCard(customerId, cardId, function(err, card) {
+    stripe.customers.retrieveCard(userId, cardId, function(err, card) {
         if (err) {
             return deferred.reject(err);
         }
@@ -381,18 +381,18 @@ Stripe.prototype.getCard = function(customerId, cardId) {
 /**
 * @method deleteCard
 * sets delete to true for customers card
-* @param {string} customerId - required. the identifier of the customer (i.e. the customer stripe token).
+* @param {string} userId - required. the identifier of the customer (i.e. the customer stripe token).
 * @param {string} cardId - required. the ID of the card to be deleted (i.e. the card stripe token).
 * @return promise
 */
-Stripe.prototype.deleteCard = function(customerId, cardId) {
+Stripe.prototype.deleteCard = function(userId, cardId) {
     var deferred = Q.defer();
 
-    if (!cardId || !customerId) {
-        return Q.reject('cardId & customerId required');
+    if (!cardId || !userId) {
+        return Q.reject('cardId & userId required');
     }
 
-    stripe.customers.deleteCard(customerId, cardId, function(err, card) {
+    stripe.customers.deleteCard(userId, cardId, function(err, card) {
         if (err) {
             return deferred.reject(err);
         }
@@ -405,17 +405,17 @@ Stripe.prototype.deleteCard = function(customerId, cardId) {
 /**
 @method listCards
 * lists all cards for a customer
-* @param {string} customerId - the ID of the customer whose cards will be retrieved.
+* @param {string} userId - the ID of the customer whose cards will be retrieved.
 * @return promise
 */
-Stripe.prototype.listCards = function(customerId) {
+Stripe.prototype.listCards = function(userId) {
     var deferred = Q.defer();
 
-    if (!customerId) {
-        return Q.reject('customerId required');
+    if (!userId) {
+        return Q.reject('userId required');
     }
 
-    stripe.customers.listCards(customerId, function(err, cards) {
+    stripe.customers.listCards(userId, function(err, cards) {
         if (err) {
             return deferred.reject(err);
         }
