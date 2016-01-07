@@ -23,18 +23,15 @@ function Stripe(apiKey) {
 Stripe.prototype.createTransaction = function(amount, stripeToken, currency) {
     var deferred = Q.defer();
 
-    if (!amount) {
-        return Q.reject('amount required');
+    if (isNaN(amount)) {
+        return Q.reject(new Error('amount is required and must be a number'));
     }
     if (!stripeToken) {
-        return Q.reject('stripeToken required');
-    }
-    if (!currency) {
-        currency = 'usd';
+        return Q.reject(new Error('stripeToken required'));
     }
 
     var charge = {
-        amount: parseInt(amount.toString().replace('.', '')),
+        amount: amount,
         currency: currency || 'usd',
         customer: stripeToken
     };
@@ -59,7 +56,7 @@ Stripe.prototype.getTransaction = function(chargeId) {
     var deferred = Q.defer();
 
     if (!chargeId) {
-        return Q.reject('chargeId required');
+        return Q.reject(new Error('chargeId required'));
     }
 
     stripe.charges.retrieve(chargeId, function(err, charge) {
@@ -110,10 +107,10 @@ Stripe.prototype.listTransactions = function(limit) {
 Stripe.prototype.createUser = function(email, metadata, description) {
     var deferred = Q.defer();
     if (!email) {
-        return Q.reject('email required');
+        return Q.reject(new Error('email required'));
     }
     if (!metadata) {
-        return Q.reject('metadata required');
+        return Q.reject(new Error('metadata required'));
     }
 
     var customer = {
@@ -143,7 +140,7 @@ Stripe.prototype.getUser = function(userId) {
     var deferred = Q.defer();
 
     if (!userId) {
-        return Q.reject('userId required');
+        return Q.reject(new Error('userId required'));
     }
 
     stripe.customers.retrieve(userId, function(err, customer) {
@@ -166,10 +163,10 @@ Stripe.prototype.getUser = function(userId) {
 Stripe.prototype.updateUser = function(userId, userObject) {
     var deferred = Q.defer();
     if (!userId) {
-        return Q.reject('userId required');
+        return Q.reject(new Error('userId required'));
     }
     if (!userObject) {
-        return Q.reject('userObject required');
+        return Q.reject(new Error('userObject required'));
     }
 
 
@@ -193,7 +190,7 @@ Stripe.prototype.deleteUser = function(userId) {
     var deferred = Q.defer();
 
     if (!userId) {
-        return Q.reject('userId required');
+        return Q.reject(new Error('userId required'));
     }
 
     stripe.customers.del(userId, function(err, confirmation) {
@@ -246,16 +243,16 @@ Stripe.prototype.createToken = function(cardNumber, cvv, expirationMonth, expira
     var deferred = Q.defer();
 
     if (!cardNumber) {
-        return Q.reject('cardNumber required');
+        return Q.reject(new Error('cardNumber required'));
     }
     if (!cvv) {
-        return Q.reject('cvv required');
+        return Q.reject(new Error('cvv required'));
     }
     if (!expirationMonth) {
-        return Q.reject('expirationMonth required');
+        return Q.reject(new Error('expirationMonth required'));
     }
     if (!expirationYear) {
-        return Q.reject('expirationYear required');
+        return Q.reject(new Error('expirationYear required'));
     }
 
     var cardObj = {
@@ -287,7 +284,7 @@ Stripe.prototype.getToken = function(tokenId) {
     var deferred = Q.defer();
 
     if (!tokenId) {
-        return Q.reject('tokenId required');
+        return Q.reject(new Error('tokenId required'));
     }
 
     stripe.tokens.retrieve(tokenId, function(err, token) {
@@ -345,19 +342,19 @@ Stripe.prototype.createCard = function(userId, cardNumber, expirationMonth, expi
     var deferred = Q.defer();
 
     if (!userId) {
-        return Q.reject('userId required');
+        return Q.reject(new Error('userId required'));
     }
     if (!cardNumber) {
-        return Q.reject('cardNumber required');
+        return Q.reject(new Error('cardNumber required'));
     }
     if (!expirationMonth) {
-        return Q.reject('expirationMonth required');
+        return Q.reject(new Error('expirationMonth required'));
     }
     if (!expirationYear) {
-        return Q.reject('expirationYear required');
+        return Q.reject(new Error('expirationYear required'));
     }
     if (!cvv) {
-        return Q.reject('cvv required');
+        return Q.reject(new Error('cvv required'));
     }
 
     var cardDetails = {
@@ -391,10 +388,10 @@ Stripe.prototype.getCard = function(userId, cardId) {
     var deferred = Q.defer();
 
     if (!cardId) {
-        return Q.reject('cardId required');
+        return Q.reject(new Error('cardId required'));
     }
     if (!userId) {
-        return Q.reject('userId required');
+        return Q.reject(new Error('userId required'));
     }
 
     stripe.customers.retrieveCard(userId, cardId, function(err, card) {
@@ -418,10 +415,10 @@ Stripe.prototype.deleteCard = function(userId, cardId) {
     var deferred = Q.defer();
 
     if (!cardId) {
-        return Q.reject('cardId required');
+        return Q.reject(new Error('cardId required'));
     }
     if (!userId) {
-        return Q.reject('userId required');
+        return Q.reject(new Error('userId required'));
     }
 
     stripe.customers.deleteCard(userId, cardId, function(err, card) {
@@ -444,7 +441,7 @@ Stripe.prototype.listCards = function(userId) {
     var deferred = Q.defer();
 
     if (!userId) {
-        return Q.reject('userId required');
+        return Q.reject(new Error('userId required'));
     }
 
     stripe.customers.listCards(userId, function(err, cards) {
