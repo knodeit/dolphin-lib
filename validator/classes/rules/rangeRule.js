@@ -10,7 +10,7 @@ var KNRuleException = require('../../exceptions/KNRuleException');
 var KNErrorCodes = require('../KNErrorCodes');
 
 exports.validate = function (field, fieldParams, params, value) {
-    if (!fieldParams || !fieldParams.min || !fieldParams.max) {
+    if (!fieldParams || fieldParams.min === undefined || fieldParams.max ===undefined) {
         return Q.reject(new KNRuleException(field, KNErrorCodes.range, 'The validation rule was not set right: ' + field));
     }
 
