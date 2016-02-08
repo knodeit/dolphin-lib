@@ -60,7 +60,7 @@ function _execScenerio($this, scenario, params) {
         var funcs = [];
         scenario.fields.forEach(function (field) {
             var value = KNUtils.findValue(params, field);
-            funcs.push(method(field, scenario.params, params, value));
+            funcs.push(method.call($this, field, scenario.params, params, value));
         });
 
         Q.allSettled(funcs).then(function (result) {
