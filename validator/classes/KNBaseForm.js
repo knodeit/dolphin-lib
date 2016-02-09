@@ -17,6 +17,7 @@ function KNBaseForm(params, scenerio) {
     this.params = params;
     this.scenerio = scenerio || 'insert';
     this.errors = [];
+    this._result = null;
 }
 
 function _resolveRuleMethod($this, name) {
@@ -82,6 +83,10 @@ function _execScenerio($this, scenario, params) {
     return deferred.promise;
 }
 
+KNBaseForm.prototype.setResult = function (result) {
+    this._result = result;
+};
+
 KNBaseForm.prototype.validate = function () {
     var deferred = Q.defer();
     var $this = this;
@@ -136,8 +141,8 @@ KNBaseForm.prototype.validate = function () {
         if (errors.length > 0) {
             return deferred.reject(new KNValidationException(errors));
         }
-        deferred.resolve();
-    });
+        deferred.resolve(this._result);
+    }.bind(this));
     return deferred.promise;
 };
 
