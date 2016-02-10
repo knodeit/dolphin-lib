@@ -24,3 +24,5 @@ exports.KNStripe = require('./stripe');
 exports.KNMongooseFixtures = require('./mongoose-fixtures');
 
 exports.KNPassportLocalapi = require('./passport-localapi');
+
+exports.KNMailer = require('./mailer');
