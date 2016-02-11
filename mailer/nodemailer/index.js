@@ -5,23 +5,10 @@ var nodemailer = require('nodemailer');
 var smtpTransport = require('nodemailer-smtp-transport');
 
 var Mailer = module.exports = function (smtp, provider) {
-    this.provider = provider;
-    this.smtp = smtp;
-
-    var mailOption = {
-        host: this.smtp.server,
-        port: this.smtp.port,
-        emailFrom: this.smtp.emailFrom
-    };
-
-    if (this.smtp.useAuthentication && this.smtp.username) {
-        mailOption.auth = {
-            user: this.smtp.username,
-            pass: this.smtp.password
-        };
-    }
-
-    this.transport = nodemailer.createTransport(smtpTransport(mailOption));
+    var self = this;
+    self.globalParams = [];
+    self.setSMTPOptions(smtp);
+    self.setProvider(provider)
 };
 
 /**
@@ -36,6 +23,10 @@ Mailer.prototype.render = function (templateName, params) {
     var self = this;
 
     if (self.provider.getContent && (typeof self.provider.getContent === 'function')) {
+        self.globalParams.forEach(function (param) {
+            params[param.name] = param.value;
+        });
+
         self.provider.getContent(templateName, params).then(function (content) {
             deferred.resolve(content);
         }).catch(function (err) {
@@ -53,45 +44,58 @@ Mailer.prototype.render = function (templateName, params) {
  *
  * @param templateName
  * @param params
+ * @param emailMessageFields
  * @returns {*}
  */
-Mailer.prototype.send = function (templateName, params) {
+Mailer.prototype.send = function (templateName, params, emailMessageFields) {
     var deferred = Q.defer();
     var self = this;
 
-    if (self.provider.getContent && (typeof self.provider.getContent === 'function')) {
-        self.provider.getContent(templateName, params).then(function (content) {
-            params.html = content;
-            self.transport.sendMail(params, function (err, responseStatus) {
-                if (err) {
-                    console.error('Mail not sent, html: ' + content, err);
-                    return deferred.reject(new Error('Email has not been sent'));
-                }
+    self.render(templateName, params).then(function (content) {
+        emailMessageFields.html = content;
+        self.transport.sendMail(emailMessageFields, function (err, responseStatus) {
+            if (err) {
+                console.error('Mail not sent, html: ' + content, err);
+                return deferred.reject(new Error('Email has not been sent'));
+            }
 
-                deferred.resolve({status: 'ok', response: responseStatus});
-            });
-
-
-            deferred.resolve(result);
-        }).catch(function (err) {
-            deferred.reject(err);
+            deferred.resolve({status: 'ok', response: responseStatus});
         });
-    } else {
-        deferred.reject(new Error('Uncorrect Mailer Content Provider'));
-    }
+    }).catch(function (err) {
+        deferred.reject(err);
+    });
 
     return deferred.promise;
 };
 
+
 /**
- * Set SMTP option
+ * Set global template params
  *
  * @param name
  * @param value
  */
 Mailer.prototype.setVariable = function (name, value) {
     var self = this;
-    self.smtp[name] = value;
+    if (!self.globalParams) {
+        self.globalParams = [];
+    }
+    self.globalParams.push({name: name, value: value});
+};
+
+/**
+ * Set SMTP options
+ *
+ * @param name
+ * @param value
+ */
+Mailer.prototype.setSMTPOptions = function (smtp) {
+    if (!smtp || !smtp.server || !smtp.port) {
+        throw new Error('Uncorrect SMTP settings');
+    }
+
+    var self = this;
+    self.smtp = smtp;
 
     var mailOption = {
         host: self.smtp.server,
@@ -113,5 +117,9 @@ Mailer.prototype.setVariable = function (name, value) {
  * @param provider
  */
 Mailer.prototype.setProvider = function (provider) {
+    if (!provider) {
+        throw new Error('Uncorrect Mailer Content Provider');
+    }
+
     this.provider = provider;
 };

@@ -1,4 +1,4 @@
 'use strict';
 
-exports.KNBaseMailProvider = require('./provider');
-exports.KNNodeMailer = require('./nodemailer');
+exports.KNProviders = require('./providers');
+exports.KNMailer = require('./nodemailer');
