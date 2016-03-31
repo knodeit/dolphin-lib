@@ -14,9 +14,9 @@ exports.validate = function (field, fieldParams, params, value) {
         return Q.reject(new KNRuleException(field, KNErrorCodes.stringLength, 'The validation rule was not set right: ' + field));
     }
 
-    var message = 'Field "{field}" must be at least {min} characters long'.replace('{field}', field).replace('{min}', fieldParams.min);
+    var message = 'The field must be at least {min} characters long'.replace('{min}', fieldParams.min);
     if (fieldParams.min !== undefined && fieldParams.max !== undefined) {
-        message = 'Field "{field}" must be between {min}-{max} characters long'.replace('{field}', field).replace('{min}', fieldParams.min).replace('{max}', fieldParams.max);
+        message = 'The field must be between {min}-{max} characters long'.replace('{min}', fieldParams.min).replace('{max}', fieldParams.max);
     }
 
     if (!validator.isLength(value, fieldParams.min, fieldParams.max)) {

@@ -9,7 +9,7 @@ var KNErrorCodes = require('../KNErrorCodes');
 var validator = require('validator');
 
 exports.validate = function (field, fieldParams, params, value) {
-    var message = 'The field "{field}" is required'.replace('{field}', field);
+    var message = 'The field is required';
 
     if (validator.isBoolean(value) || validator.isNumeric(value)) {
         return Q.resolve();

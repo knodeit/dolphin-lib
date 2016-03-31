@@ -14,7 +14,7 @@ exports.validate = function (field, fieldParams, params, value) {
         return Q.reject(new KNRuleException(field, KNErrorCodes.range, 'The validation rule was not set right: ' + field));
     }
 
-    var message = 'Field "{field}" must be between {min} and {max}'.replace('{field}', field).replace('{min}', fieldParams.min).replace('{max}', fieldParams.max);
+    var message = 'The field must be between {min} and {max}'.replace('{min}', fieldParams.min).replace('{max}', fieldParams.max);
 
     try {
         if (parseInt(value) >= fieldParams.min && parseInt(value) <= fieldParams.max) {
