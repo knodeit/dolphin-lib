@@ -23,7 +23,7 @@ exports.validate = function (field, fieldParams, params, value) {
             throw new Error();
         }
 
-        if (value instanceof String && value.trim().length === 0) {
+        if ((typeof value == "string" || value instanceof String) && value.trim().length === 0) {
             throw new Error();
         }
     } catch (e) {
