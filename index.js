@@ -28,3 +28,5 @@ exports.KNPassportLocalapi = require('./passport-localapi');
 exports.KNProviders = require('./mailer/provider');
 
 exports.KNMailer = require('./mailer/mailer');
+
+exports.KNHashes = require('./hashes');
