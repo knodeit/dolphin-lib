@@ -3,7 +3,6 @@
 /**
  * Created by Vadim on 31.07.2014.
  */
-'use strict';
 
 /**
  * `BadRequestError` error.
