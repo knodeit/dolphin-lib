@@ -13,9 +13,9 @@ var KNRuleException = require('../exceptions/KNRuleException');
  * @param {express.Request} req
  * @constructor
  */
-function KNBaseForm(params, scenerio) {
+function KNBaseForm(params, scenario) {
     this.params = params;
-    this.scenerio = scenerio || 'insert';
+    this.scenario = scenario || 'insert';
     this.errors = [];
     this._result = null;
 }
@@ -41,7 +41,7 @@ function _resolveRuleMethod($this, name) {
     return deferred.promise;
 }
 
-function _execScenerio($this, scenario, params) {
+function _execScenario($this, scenario, params) {
     var deferred = Q.defer();
 
     if (!scenario.rule) {
@@ -87,6 +87,21 @@ KNBaseForm.prototype.setResult = function (result) {
     this._result = result;
 };
 
+KNBaseForm.prototype.runRule = function (rule, field, fieldParams, params, value) {
+    var deferred = Q.defer();
+    var $this = this;
+    _resolveRuleMethod($this, rule).then(function (method) {
+        if (method instanceof Error) {
+            return deferred.reject(method);
+        }
+
+        method.call($this, field, fieldParams, params, value).then(function (result) {
+            deferred.resolve(result);
+        }).catch(deferred.reject);
+    });
+    return deferred.promise;
+};
+
 KNBaseForm.prototype.validate = function () {
     var deferred = Q.defer();
     var $this = this;
@@ -94,8 +109,8 @@ KNBaseForm.prototype.validate = function () {
     if ($this.rules().default !== undefined) {
         rules.push($this.rules().default);
     }
-    if ($this.rules()[$this.scenerio] !== undefined && $this.rules()[$this.scenerio].length > 0) {
-        rules.push($this.rules()[$this.scenerio]);
+    if ($this.rules()[$this.scenario] !== undefined && $this.rules()[$this.scenario].length > 0) {
+        rules.push($this.rules()[$this.scenario]);
     }
     if (rules.length === 0) {
         return Q.resolve();
@@ -104,7 +119,7 @@ KNBaseForm.prototype.validate = function () {
     var funcs = [];
     rules.forEach(function (scenarios) {
         for (var i in scenarios) {
-            funcs.push(_execScenerio($this, scenarios[i], $this.params));
+            funcs.push(_execScenario($this, scenarios[i], $this.params));
         }
     });
     Q.all(funcs).then(function (scenarios) {
