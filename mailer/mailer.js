@@ -53,6 +53,10 @@ Mailer.prototype.send = function (templateName, params, emailMessageFields) {
 
     self.render(templateName, params).then(function (content) {
         emailMessageFields.html = content;
+        if (!emailMessageFields.from) {
+            emailMessageFields.from = self.smtp.emailFrom;
+        }
+
         self.transport.sendMail(emailMessageFields, function (err, responseStatus) {
             if (err) {
                 console.error('Mail not sent, html: ' + content, err);
@@ -91,7 +95,7 @@ Mailer.prototype.setVariable = function (name, value) {
  */
 Mailer.prototype.setSMTPOptions = function (smtp) {
     if (!smtp || !smtp.server || !smtp.port) {
-        throw new Error('Uncorrect SMTP settings');
+        throw new Error('Incorrect SMTP settings');
     }
 
     var self = this;
@@ -99,10 +103,9 @@ Mailer.prototype.setSMTPOptions = function (smtp) {
 
     var mailOption = {
         host: self.smtp.server,
-        port: self.smtp.port,
-        emailFrom: self.smtp.emailFrom
+        port: self.smtp.port
     };
-    if (self.smtp.useAuthentication && self.smtp.username) {
+    if (self.smtp.username && self.smtp.password) {
         mailOption.auth = {
             user: self.smtp.username,
             pass: self.smtp.password
@@ -118,7 +121,7 @@ Mailer.prototype.setSMTPOptions = function (smtp) {
  */
 Mailer.prototype.setProvider = function (provider) {
     if (!provider) {
-        throw new Error('Uncorrect Mailer Content Provider');
+        throw new Error('Incorrect Mailer Content Provider');
     }
 
     this.provider = provider;
