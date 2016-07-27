@@ -1,7 +1,7 @@
 {
     "name": "dolphin-lib",
     "description": "All libs for Dolphin",
-    "version": "0.5.2",
+    "version": "0.6.0",
     "private": false,
     "author": "LPG Labs",
     "contributors": [],
