@@ -16,13 +16,24 @@ MandrillProvider.prototype.getContent = function (templateName, params) {
     var deferred = Q.defer();
     var self = this;
     self.mandrillClient.templates.info({name: templateName}, function (result) {
+        var merge_vars = [];
+        if (params instanceof Array) {
+            merge_vars = params;
+        } else {
+            for (var key in params) {
+                merge_vars.push({
+                    name: key,
+                    content: params[key]
+                });
+            }
+        }
         self.mandrillClient.templates.render({
             template_name: templateName,
             template_content: [{
                 name: 'main',
                 content: result.code
             }],
-            merge_vars: params
+            merge_vars: merge_vars
         }, function (content) {
             deferred.resolve(content.html);
         }, function (err) {
