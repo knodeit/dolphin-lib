@@ -15,7 +15,7 @@ exports.validate = function (field, fieldParams, params, value) {
             return Q.resolve();
         }
 
-        if (value === undefined || value === null) {
+        if (value === undefined) {
             throw new Error();
         }
 
